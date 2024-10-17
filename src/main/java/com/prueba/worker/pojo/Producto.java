@@ -9,6 +9,8 @@ public class Producto {
 
     private Double precio ;
 
+    public Producto() {
+    }
 
     public Producto(String nombre, Double precio, Long productoId) {
         this.nombre = nombre;

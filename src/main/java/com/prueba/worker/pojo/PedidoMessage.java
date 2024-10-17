@@ -11,6 +11,9 @@ public class PedidoMessage implements Serializable {
     private Long clientId;
     private List<Producto> productos;
 
+    public PedidoMessage() {
+    }
+
     public PedidoMessage(Long clientId, Long pedidoId, List<Producto> productos) {
         this.clientId = clientId;
         this.pedidoId = pedidoId;
