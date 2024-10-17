@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: worker
+ # kafka:
+    #  bootstrap-servers: localhost:9092
+      #  consumer:
+      #  group-id: worker-group-1
+      #  auto-offset-reset: earliest
+      #  key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # #Todo auto-commit should be used or put the message in the queue again
+    # enable-auto-commit: true  # Auto commit offsets
+
+#custom configuration
+custom:
+  kafka:
+   consumer:
+    topic:
+      name: pedidos
+      group-id: worker-group-1
