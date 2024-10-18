@@ -37,6 +37,7 @@ services:
     ports:
       - "3001:8080"
     environment:
-      ADDR_CLIENTES: "0.0.0.0:8080"
+      ADDR_PRODUCTOS: "0.0.0.0:8080"
+
 
 
