@@ -22,4 +22,21 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+  cliente:
+    build:
+      context: ../go/clientes
+      dockerfile: Dockerfile
+    ports:
+      - "3000:8080"
+    environment:
+      ADDR_CLIENTES: "0.0.0.0:8080"
+  productos:
+    build:
+      context: ../go/productos
+      dockerfile: Dockerfile
+    ports:
+      - "3001:8080"
+    environment:
+      ADDR_CLIENTES: "0.0.0.0:8080"
+
 
