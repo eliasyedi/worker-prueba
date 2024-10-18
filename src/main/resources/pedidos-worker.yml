@@ -1,20 +1,33 @@
 spring:
+  redis:
+    host: localhost       # Redis server host (default: localhost)
+    port: 6379            # Redis server port (default: 6379)
+    database: 0           # Redis database index (default: 0)
+    password: ""          # Password for Redis (optional)
+    timeout: 6000ms       # Connection timeout (default: 2000ms)
+    lettuce:
+      pool:
+        max-active: 8     # Maximum number of connections in the pool
+        max-idle: 8       # Maximum number of idle connections
+        min-idle: 0       # Minimum number of idle connections
+        max-wait: -1ms    # Maximum wait time for a connection (negative means no limit)
+      shutdown-timeout: 100ms  # Graceful shutdown timeout
   application:
     name: worker
-  kafka:
-    consumer:
-      bootstrap-servers: localhost:9092
-      auto-offset-reset: earliest
-      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      enable-auto-commit: true  # Auto commit offsets
-      properties:
-        spring:
-          json:
-            trusted:
-              packages: '*'
-          deserializer.key.delegate.class:  org.apache.kafka.common.serialization.StringDeserializer
-          deserializer.value.delegate.class: com.prueba.worker.utils.PedidosDeserializer
+#  kafka:
+#    consumer:
+#      bootstrap-servers: localhost:9092
+#      auto-offset-reset: earliest
+#      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+#      enable-auto-commit: true  # Auto commit offsets
+#      properties:
+#        spring:
+#          json:
+#            trusted:
+#              packages: '*'
+#          deserializer.key.delegate.class:  org.apache.kafka.common.serialization.StringDeserializer
+#          deserializer.value.delegate.class: com.prueba.worker.utils.PedidosDeserializer
 
 
 #custom configuration
@@ -22,6 +35,7 @@ custom:
   kafka:
     consumer:
       pedidos:
+        bootstrap-servers: localhost:9092
         topic:
           name: pedidos
           group-id: pedidos-worker
