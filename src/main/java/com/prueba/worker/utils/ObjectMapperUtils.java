@@ -21,6 +21,10 @@ public class ObjectMapperUtils {
         return _readerObjectMapper;
     }
 
+    public static ObjectMapper getWritterObjectMapper() {
+        return _writterObjectMapper;
+    }
+
 
     //any customization regarding dates or behavior when serializing objects to json
 

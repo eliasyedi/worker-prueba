@@ -14,21 +14,20 @@ spring:
       shutdown-timeout: 100ms  # Graceful shutdown timeout
   application:
     name: worker
-  kafka:
-    consumer:
-      bootstrap-servers: localhost:9092
-      auto-offset-reset: earliest
-      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      enable-auto-commit: true  # Auto commit offsets
-      properties:
-        spring:
-          json:
-            trusted:
-              packages: '*'
-          deserializer.key.delegate.class:  org.apache.kafka.common.serialization.StringDeserializer
-          deserializer.value.delegate.class: com.prueba.worker.utils.PedidosDeserializer
-        max.partition.fetch.bytes: 10485760
+#  kafka:
+#    consumer:
+#      bootstrap-servers: localhost:9092
+#      auto-offset-reset: earliest
+#      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+#      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+#      enable-auto-commit: true  # Auto commit offsets
+#      properties:
+#        spring:
+#          json:
+#            trusted:
+#              packages: '*'
+#          deserializer.key.delegate.class:  org.apache.kafka.common.serialization.StringDeserializer
+#          deserializer.value.delegate.class: com.prueba.worker.utils.PedidosDeserializer
 
 
 #custom configuration
