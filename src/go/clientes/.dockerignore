@@ -1,0 +1,7 @@
+#igonre for build of image
+/tmp/
+/target/
+/.air.toml
+**/*.md
+.git
+.gitignore
