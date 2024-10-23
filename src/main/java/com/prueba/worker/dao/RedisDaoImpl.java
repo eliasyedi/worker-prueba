@@ -38,13 +38,13 @@ public class RedisDaoImpl implements RedisDao{
 
     public Mono<Boolean> lockPedido(Long clienteId, Long pedidoId){
         String clienteKey = getClienteKey(clienteId.toString());
-        String pedidoKey = getClienteKey(pedidoId.toString());
+        String pedidoKey = getPedidoKey(pedidoId.toString());
         return redisTemplate.opsForValue().setIfAbsent(pedidoKey, clienteKey);
     }
 
     public Mono<Boolean> unlockPedido(Long clienteId, Long pedidoId){
         String clienteKey = getClienteKey(clienteId.toString());
-        String pedidoKey = getClienteKey(pedidoId.toString());
+        String pedidoKey = getPedidoKey(pedidoId.toString());
         Mono<String> valor = redisTemplate.opsForValue().get(pedidoKey);
         Mono<Boolean> delete = redisTemplate.opsForValue().delete(pedidoKey);
         //checks if key belongs to caller
@@ -60,7 +60,7 @@ public class RedisDaoImpl implements RedisDao{
 
     public Mono<Long> updatePedidosFallados(PedidoMessage pedidoMessage){
         String pedidoMensajeKey = getPedidoMensajeKey(pedidoMessage.getPedidoId());
-        String pedidoMensajeKeyCounter = getPedidoMensajeKey(pedidoMessage.getPedidoId());
+        String pedidoMensajeKeyCounter = getPedidoMensajeKeyCounter(pedidoMessage.getPedidoId());
         return redisTemplate.hasKey(pedidoMensajeKey)
                 .flatMap(value -> {
                     if(!value){

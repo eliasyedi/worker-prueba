@@ -1,0 +1,17 @@
+services:
+  cliente:
+    build:
+      context: ../go/clientes
+      dockerfile: Dockerfile
+    ports:
+      - "3000:8080"
+    environment:
+      ADDR_CLIENTES: "0.0.0.0:8080"
+  productos:
+    build:
+      context: ../go/productos
+      dockerfile: Dockerfile
+    ports:
+      - "3001:8080"
+    environment:
+      ADDR_PRODUCTOS: "0.0.0.0:8080"

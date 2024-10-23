@@ -2,9 +2,9 @@ package db
 
 
 type Producto struct{
-    ProductoId    int
-    Name        string
-    Price     float64 
+    ProductoId    int `json:"productoId"`
+    Name        string `json:"name"`
+    Price     float64  `json:"price"`
 }
 
 type DbRepository interface{

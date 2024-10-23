@@ -2,9 +2,9 @@ package db
 
 
 type Cliente struct{
-    ClientId    int
-    Name        string
-    Status      string
+    ClientId    int `json:"clientId"`
+    Name        string `json:"name"`
+    Status      string `json:"status"`
 }
 
 type DbRepository interface{

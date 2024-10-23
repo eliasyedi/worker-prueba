@@ -5,33 +5,27 @@ public class Producto {
 
     private Long productoId;
 
-    private String nombre;
+    private String name;
 
-    private Double precio ;
+    private Double price ;
 
     public Producto() {
     }
 
-    public Producto(String nombre, Double precio, Long productoId) {
-        this.nombre = nombre;
-        this.precio = precio;
-        this.productoId = productoId;
+    public String getName() {
+        return name;
     }
 
-    public String getNombre() {
-        return nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public Double getPrice() {
+        return price;
     }
 
-    public Double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(Double precio) {
-        this.precio = precio;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public Long getProductoId() {
@@ -42,13 +36,12 @@ public class Producto {
         this.productoId = productoId;
     }
 
-
     @Override
     public String toString() {
         return "Producto{" +
-                "nombre='" + nombre + '\'' +
+                "name='" + name + '\'' +
                 ", productoId=" + productoId +
-                ", precio=" + precio +
+                ", price=" + price +
                 '}';
     }
 }

@@ -1,12 +1,17 @@
 package com.prueba.worker.pojo;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.io.Serializable;
 import java.util.List;
 
 
+@Document(collection = "pedidos")
 public class PedidoMessage implements Serializable {
 
-
+    @Id
+    private String _id;
     private Long pedidoId;
     private Long clientId;
     private List<Producto> productos;

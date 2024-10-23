@@ -10,11 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WorkerApplication {
 
 	public static void main(String[] args) {
-
-		SpringApplicationBuilder builder = new SpringApplicationBuilder(WorkerApplication.class);
-		builder.properties("spring.config.name:pedidos-worker")
-				.build()
-				.run(args);
+		SpringApplication.run(WorkerApplication.class, args);
 	}
 
 	@Bean

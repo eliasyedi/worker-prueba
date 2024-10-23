@@ -27,15 +27,12 @@ import java.util.Map;
 public class AppConfig {
 
 
-    @Value("${custom.kafka.consumer.quantity:3}")
-    private Integer consumerQuantity;
-
-    @Value("${custom.kafka.consumer.pedidos.bootstrap-servers}")
+    @Value("${spring.kafka.consumer.group-id}")
+    String groupId;
+    @Value("${spring.kafka.consumer.bootstrap-servers}")
     String bootstrapServers;
     @Value("${custom.kafka.consumer.pedidos.topic.name}")
     String topicName;
-    @Value("${custom.kafka.consumer.pedidos.topic.group-id}")
-    String groupId;
 
 
 
@@ -75,9 +72,9 @@ public class AppConfig {
         RedisSerializationContext.RedisSerializationContextBuilder<String, PedidoMessage> builder =
                 RedisSerializationContext.newSerializationContext(keySerializer);
         RedisSerializationContext<String, PedidoMessage> context = builder
-                .value(valueSerializer)  // Set value serializer
-                .hashKey(keySerializer)   // Set hash key serializer
-                .hashValue(valueSerializer)  // Set hash value serializer
+                .value(valueSerializer)
+                .hashKey(keySerializer)
+                .hashValue(valueSerializer)
                 .build();
 
         return new ReactiveRedisTemplate<>(factory, context);
