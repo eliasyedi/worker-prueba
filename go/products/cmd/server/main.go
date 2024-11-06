@@ -1,10 +1,6 @@
 package main
 
 import (
-	"productos/config"
-	"productos/internal/db"
-	"productos/internal/handlers"
-	"productos/internal/services"
 	"context"
 	"flag"
 	"log"
