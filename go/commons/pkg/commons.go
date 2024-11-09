@@ -1,6 +1,11 @@
 package commons
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+)
 
 type APIError struct{
     StatusCode int `json:"statusCode"`
@@ -19,4 +24,14 @@ func NewApiError(statusCode int, err error, useApiMessage bool) APIError{
         Msg: err.Error(),
         UseApiMessage: useApiMessage,
     }
+}
+
+func WriteJSON(w http.ResponseWriter, statusCode int, apiErr APIError){
+    bytes, err := json.Marshal(apiErr)
+
+    if err != nil{
+        log.Printf(err.Error())
+    }
+    w.WriteHeader(statusCode)
+    w.Write(bytes)
 }

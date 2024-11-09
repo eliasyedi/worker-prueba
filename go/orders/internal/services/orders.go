@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -12,54 +13,63 @@ import (
 // holds information about the order
 type Order struct{
     //generated orderId with snowflake
-    OrderId int64 
+    OrderId int64  `json:"orderId"`
     //client if of client that made the order
-    ClientId int64
+    ClientId *int64 `json:"clientId"`
     //list of products 
-    Products []Product 
+    Products []Product  `json:"products"`
 }
 
 
 // holds information about the product
 type Product struct{
-
-    ProductId int64
-    Name string
-    Price float64
+    ProductId int64 `json:"productId"`
+    Name string `json:"name"`
+    Price float64 `json:"price"`
 }
 
 type OrdersService interface {
-    CreateOrder(clientId string) (Order,error);
+    PlaceOrder(order *Order) error;
 }
 
 
-func NewClientesMockService(dataRepository db.DbRepository) *ClientesMockService{
-   return &ClientesMockService{
-        storage: dataRepository ,
+type OrdersProducerService struct{
+    ordersProducer *kafka.Producer
+}
+
+func NewOrdersService(producer *kafka.Producer) *OrdersProducerService{
+
+   return &OrdersProducerService{
+        ordersProducer: producer ,
     }
     
 }
 
 
+var topicOrders = "orders";
 
-func (c *ClientesMockService)GetClientById(clientId string) (db.Cliente,error){
-    cliente, err := c.storage.GetById(clientId)
-    kafka.Producer
+func (o *OrdersProducerService) PlaceOrder(order *Order) error{
+    //logic for creating snowflakeId
+    value, err :=  json.Marshal(order)
     if err != nil{
-        log.Println(err)
-        return db.Cliente{}, commons.NewApiError(http.StatusBadRequest,errors.New("no se pudo obtener el cliente"),true) 
+        return commons.NewApiError(http.StatusBadRequest,errors.New("could not parse order"),true) 
     }
-    return cliente, nil
+
+    deliveryChannel := make(chan kafka.Event)
+    message := &kafka.Message{
+        TopicPartition: kafka.TopicPartition{ Topic:&topicOrders,Partition:kafka.PartitionAny},
+        Value: value,
+    }
+
+    err = o.ordersProducer.Produce(message,deliveryChannel)
+    if err != nil{
+        return commons.NewApiError(http.StatusBadRequest,errors.New("could not produce message to broker"),true) 
+    }
+    
+    event := <-deliveryChannel
+    msg:=event.(*kafka.Message) 
+    log.Printf("message produced: %s",msg)
+    return nil;
+
 }
 
-func (c * ClientesMockService)GetValidClientById(clientId string) (db.Cliente,error){
-    cliente, err := c.storage.GetById(clientId)
-    if err != nil{
-        log.Println(err)
-        return db.Cliente{}, commons.NewApiError(http.StatusBadRequest,errors.New("no se pudo obtener el cliente"),true) 
-    }
-    if cliente.Status != "active"{
-        return db.Cliente{}, commons.NewApiError(http.StatusBadRequest,errors.New("cliente invalido"),true) 
-    }
-    return cliente, nil
-}

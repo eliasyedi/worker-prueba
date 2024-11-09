@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
+	"io"
 	"log"
 	"net/http"
 
-	"github.com/eliasyedi/worker-prueba/go/commons"
+	commons "github.com/eliasyedi/worker-prueba/go/commons/pkg"
+	"github.com/eliasyedi/worker-prueba/go/orders/internal/services"
 	"github.com/gorilla/mux"
 )
 
@@ -15,95 +16,57 @@ import (
 
 type handler struct {
 	//for inyection of services, etc
-   clientesService  services.ClientesService
+   orderService  services.OrdersService
 }
 
 const (
-	ClientesPrefix = "/clientes"
+	orderPrefix = "/order"
 )
 
 // pass things for inyection
-func NewClientesHandler(clientesService services.ClientesService) *handler {
+func NewOrdersHandler(orderService services.OrdersService) *handler {
 	return &handler{
-        clientesService: clientesService,
+        orderService: orderService,
     }
 }
 
 func (h *handler) RegisterHandlers(router *mux.Router) {
-	subRouter := router.PathPrefix(ClientesPrefix).Subrouter()
-	subRouter.HandleFunc("/cliente/{id}", h.HandleGetClientById).Methods("GET")
-	subRouter.HandleFunc("/cliente/valido/{id}", h.HandleGetValidClientById).Methods("GET")
+	subRouter := router.PathPrefix(orderPrefix).Subrouter()
+	subRouter.HandleFunc("/order}", h.HandlePostPlaceOrder).Methods("POST")
 }
 
 
-func (h *handler) HandleGetValidClientById(w http.ResponseWriter, r *http.Request) {
+func (h *handler) HandlePostPlaceOrder(w http.ResponseWriter, r *http.Request) {
     params := mux.Vars(r)
     id :=  params["id"]
 	log.Printf("handle get with id %s \n", id)
-    if id == ""{
-        apiErr := commons.NewApiError(http.StatusBadRequest,errors.New(http.StatusText(http.StatusBadRequest)),false)
-        writeJSON(w,http.StatusBadRequest,apiErr)
-        return;
-    }
-    cliente, err := h.clientesService.GetValidClientById(id)
+    body, err := io.ReadAll(r.Body)
     if err != nil{
-        if apiErr, ok := err.(commons.APIError); ok{
-            writeJSON(w,apiErr.StatusCode,apiErr) 
-            return
-        }else {
-            writeJSON(w,http.StatusBadRequest,commons.NewApiError(http.StatusBadRequest,err,false))
-            return
-        }
-    }
-    
-    bytes, err := json.Marshal(cliente)
-
-    if err != nil{
-        log.Printf(err.Error())
+        apiErr := commons.NewApiError(http.StatusBadRequest,err,false)
+        commons.WriteJSON(w,apiErr.StatusCode,apiErr)
+        log.Println(apiErr) 
         return
     }
-    w.Write(bytes)
-
-
-}
-
-func (h *handler) HandleGetClientById(w http.ResponseWriter, r *http.Request) {
-    params := mux.Vars(r)
-    id :=  params["id"]
-	log.Printf("handle getclientesById with id %s \n", id)
-
-    if id == ""{
+    /*if id == ""{
         apiErr := commons.NewApiError(http.StatusBadRequest,errors.New(http.StatusText(http.StatusBadRequest)),false)
-        writeJSON(w,http.StatusBadRequest,apiErr)
+        commons.WriteJSON(w,http.StatusBadRequest,apiErr)
         return;
+    }*/
+    order := &services.Order{}
+    err = json.Unmarshal(body,order)
+    if err != nil{
+        log.Println(commons.NewApiError(http.StatusBadRequest,err,false)) 
+        return
     }
-    cliente, err := h.clientesService.GetClientById(id)
+    err = h.orderService.PlaceOrder(order)
     if err != nil{
         if apiErr, ok := err.(commons.APIError); ok{
-            writeJSON(w,apiErr.StatusCode,apiErr) 
+            commons.WriteJSON(w,apiErr.StatusCode,apiErr) 
             return
         }else {
-            writeJSON(w,http.StatusBadRequest,commons.NewApiError(http.StatusBadRequest,err,false))
+            commons.WriteJSON(w,http.StatusInternalServerError,commons.NewApiError(http.StatusInternalServerError,err,false))
             return
         }
     }
-
-    
-    bytes, err := json.Marshal(cliente)
-
-    if err != nil{
-        log.Printf(err.Error())
-    }
-    w.Write(bytes)
 }
 
-
-func writeJSON(w http.ResponseWriter, statusCode int, apiErr commons.APIError){
-    bytes, err := json.Marshal(apiErr)
-
-    if err != nil{
-        log.Printf(err.Error())
-    }
-    w.WriteHeader(statusCode)
-    w.Write(bytes)
-}
